@@ -91,6 +91,7 @@ class Constants {
 	public const ANSWER_TYPE_DATE = 'date';
 	public const ANSWER_TYPE_DATETIME = 'datetime';
 	public const ANSWER_TYPE_TIME = 'time';
+	public const ANSWER_TYPE_TENANT = 'tenant';
 
 	// All AnswerTypes
 	public const ANSWER_TYPES = [
@@ -101,7 +102,8 @@ class Constants {
 		self::ANSWER_TYPE_LONG,
 		self::ANSWER_TYPE_DATE,
 		self::ANSWER_TYPE_DATETIME,
-		self::ANSWER_TYPE_TIME
+		self::ANSWER_TYPE_TIME,
+		self::ANSWER_TYPE_TENANT,
 	];
 
 	// AnswerTypes, that need/have predefined Options
@@ -150,6 +152,10 @@ class Constants {
 
 	public const EXTRA_SETTINGS_SHORT = [
 		'validationType',
+		'validationRegex'
+	];
+
+	public const EXTRA_SETTINGS_TENANT = [
 		'validationRegex'
 	];
 

@@ -173,4 +173,26 @@ class SubmissionMapper extends QBMapper {
 
 		$qb->executeStatement();
 	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getSubmittedTenantsForUser(int $formId, string $userId, ?int $tenantQuestionId): array {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select('a.text AS tenant')
+			->from($this->getTableName(), 's')
+			->where(
+				$qb->expr()->eq('s.form_id', $qb->createNamedParameter($formId, IQueryBuilder::PARAM_INT))
+			)
+			->join('s', 'forms_v2_answers', 'a', $qb->expr()->andX(
+				$qb->expr()->eq('s.id', 'a.submission_id'),
+				$qb->expr()->eq('a.question_id', $qb->createNamedParameter($tenantQuestionId, IQueryBuilder::PARAM_INT)),
+			))
+			->andWhere(
+				$qb->expr()->eq('s.user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+			);
+
+		return $qb->executeQuery()->fetchAll(\PDO::FETCH_COLUMN);
+	}
 }

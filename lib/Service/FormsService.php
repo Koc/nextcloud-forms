@@ -159,7 +159,7 @@ class FormsService {
 		// Append permissions for current user.
 		$result['permissions'] = $this->getPermissions($form);
 		// Append canSubmit, to be able to show proper EmptyContent on internal view.
-		$result['canSubmit'] = $this->canSubmit($form);
+		$result['canSubmit'] = $this->canSubmit($form, null);
 
 		// Append submissionCount if currentUser has permissions to see results
 		if (in_array(Constants::PERMISSION_RESULTS, $result['permissions'])) {
@@ -301,11 +301,14 @@ class FormsService {
 	 * @param Form $form
 	 * @return boolean
 	 */
-	public function canSubmit(Form $form): bool {
+	public function canSubmit(Form $form, ?array $answers = null): bool {
 		// We cannot control how many time users can submit if public link / legacyLink available
 		if ($this->hasPublicLink($form)) {
 			return true;
 		}
+
+//		var_dump($answers);
+//		exit;
 
 		// Owner is always allowed to submit
 		if ($this->currentUser->getUID() === $form->getOwnerId()) {
@@ -314,6 +317,30 @@ class FormsService {
 
 		// Refuse access, if SubmitMultiple is not set and user already has taken part.
 		if (!$form->getSubmitMultiple()) {
+			$questions = $this->questionMapper->findByForm($form->getId());
+			$tenantQuestionId = null;
+			foreach ($questions as $question) {
+				if (Constants::ANSWER_TYPE_TENANT === $question->getType()) {
+					$tenantQuestionId = $question->getId();
+				}
+			}
+			//fixme: check is tenant required but not provided
+
+			if ($tenantQuestionId) {
+				$tenant = $_GET['tenant'] ?? null;
+				if ($answers) {
+					$tenant = $answers[$tenantQuestionId][0] ?? null;
+				}
+
+				$submittedTenants = $this->submissionMapper->getSubmittedTenantsForUser(
+					$form->getId(),
+					$this->currentUser->getUID(),
+					$tenantQuestionId,
+				);
+
+				return !in_array($tenant, $submittedTenants);
+			}
+
 			$participants = $this->submissionMapper->findParticipantsByForm($form->getId());
 			foreach ($participants as $participant) {
 				if ($participant === $this->currentUser->getUID()) {
@@ -595,6 +622,9 @@ class FormsService {
 				break;
 			case Constants::ANSWER_TYPE_SHORT:
 				$allowed = Constants::EXTRA_SETTINGS_SHORT;
+				break;
+			case Constants::ANSWER_TYPE_TENANT:
+				$allowed = Constants::EXTRA_SETTINGS_TENANT;
 				break;
 			default:
 				$allowed = [];

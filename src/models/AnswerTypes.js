@@ -22,6 +22,7 @@
 
 import QuestionMultiple from '../components/Questions/QuestionMultiple.vue'
 import QuestionDropdown from '../components/Questions/QuestionDropdown.vue'
+import QuestionTenant from '../components/Questions/QuestionTenant.vue'
 import QuestionShort from '../components/Questions/QuestionShort.vue'
 import QuestionLong from '../components/Questions/QuestionLong.vue'
 import QuestionDate from '../components/Questions/QuestionDate.vue'
@@ -30,6 +31,7 @@ import IconCheckboxOutline from 'vue-material-design-icons/CheckboxOutline.vue'
 import IconRadioboxMarked from 'vue-material-design-icons/RadioboxMarked.vue'
 import IconArrowDownDropCircleOutline from 'vue-material-design-icons/ArrowDownDropCircleOutline.vue'
 import IconTextShort from 'vue-material-design-icons/TextShort.vue'
+import IconVectorArrangeAbove from 'vue-material-design-icons/VectorArrangeAbove.vue'
 import IconTextLong from 'vue-material-design-icons/TextLong.vue'
 import IconCalendar from 'vue-material-design-icons/Calendar.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
@@ -102,6 +104,18 @@ export default {
 		createPlaceholder: t('forms', 'People can pick one option'),
 		submitPlaceholder: t('forms', 'Pick an option'),
 		warningInvalid: t('forms', 'This question needs a title and at least one answer!'),
+	},
+
+	tenant: {
+		component: QuestionTenant,
+		icon: IconVectorArrangeAbove,
+		label: t('forms', 'Tenant'),
+		predefined: false,
+
+		titlePlaceholder: t('forms', 'Tenant question title'),
+		createPlaceholder: t('forms', 'Tenant input'),
+		// submitPlaceholder: t('forms', 'Enter your answer'),
+		warningInvalid: t('forms', 'This question needs a title!'),
 	},
 
 	short: {

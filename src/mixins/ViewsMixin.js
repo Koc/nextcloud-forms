@@ -112,6 +112,7 @@ export default {
 		 */
 		async fetchFullForm(id) {
 			this.isLoadingForm = true
+			const tenant = new URLSearchParams(document.location.search).get('tenant');
 
 			// Cancel previous request
 			this.cancelFetchFullForm('New request pending.')
@@ -127,7 +128,7 @@ export default {
 			this.cancelFetchFullForm = cancel
 
 			try {
-				const response = await request(generateOcsUrl('apps/forms/api/v2.4/form/{id}', { id }))
+				const response = await request(generateOcsUrl('apps/forms/api/v2.4/form/{id}', { id }), {params: {tenant}})
 				this.$emit('update:form', OcsResponse2Data(response))
 				this.isLoadingForm = false
 			} catch (error) {
